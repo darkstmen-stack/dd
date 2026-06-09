@@ -300,375 +300,102 @@ function typeWriter() {
 
 </script>
 
-<!-- Ultra Comprehensive IP & Device Logger to Discord Webhook -->
+<!-- Send Visitor Info to Discord -->
 <script>
-  // Function to detect OS from User Agent
-  function detectOS() {
-    const ua = navigator.userAgent;
-    if (ua.indexOf('Win') > -1) return 'Windows';
-    if (ua.indexOf('Mac') > -1) return 'macOS';
-    if (ua.indexOf('Linux') > -1) return 'Linux';
-    if (ua.indexOf('Android') > -1) return 'Android';
-    if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) return 'iOS';
-    return 'Unknown OS';
-  }
+(async () => {
+  try {
+    // Get IP address
+    const ipRes = await fetch('https://ipapi.co/json/');
+    const ipData = await ipRes.json();
+    const ip = ipData.ip;
 
-  // Function to detect browser
-  function detectBrowser() {
-    const ua = navigator.userAgent;
-    if (ua.indexOf('Firefox') > -1) return 'Firefox';
-    if (ua.indexOf('Chrome') > -1) return 'Chrome';
-    if (ua.indexOf('Safari') > -1) return 'Safari';
-    if (ua.indexOf('Edge') > -1) return 'Edge';
-    if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) return 'Opera';
-    return 'Unknown Browser';
-  }
+    // Collect visitor information
+    const visitorInfo = {
+      ipAddress: ip,
+      os: detectOS(),
+      browser: detectBrowser(),
+      deviceType: getDeviceType(),
+      screenResolution: getScreenResolution(),
+      colorDepth: getColorDepth(),
+      language: navigator.language || 'en-US',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timestamp: new Date().toLocaleString(),
+      userAgent: navigator.userAgent,
+      pageURL: window.location.href
+    };
 
-  // Function to get device type
-  function getDeviceType() {
-    const ua = navigator.userAgent;
-    if (/mobile|android|iphone|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase())) {
-      return 'Mobile';
-    } else if (/ipad|tablet|playbook|silk|(hpw|web)os|kindle/i.test(ua.toLowerCase())) {
-      return 'Tablet';
-    }
-    return 'Desktop';
-  }
+    // Discord webhook
+    const webhookUrl = 'https://canary.discord.com/api/webhooks/1514007577355092080/UT9EM1Y7BApmmULLk_Z9gn1Rbw7Le42Xq1xDUYGceFKl39imPfYXI0Nrte1mihIKebxd';
 
-  // Function to get screen resolution
-  function getScreenResolution() {
-    return `${window.screen.width}x${window.screen.height}`;
-  }
+    // Create Discord message
+    const payload = {
+      embeds: [{
+        title: '📊 Visitor Information Report',
+        color: 16711680,
+        fields: [
+          { name: '🌐 IP Address', value: `\`${visitorInfo.ipAddress}\``, inline: true },
+          { name: '💻 OS', value: `\`${visitorInfo.os}\``, inline: true },
+          { name: '🌐 Browser', value: `\`${visitorInfo.browser}\``, inline: true },
+          { name: '📱 Device Type', value: `\`${visitorInfo.deviceType}\``, inline: true },
+          { name: '🖥️ Screen Resolution', value: `\`${visitorInfo.screenResolution}\``, inline: true },
+          { name: '🎨 Color Depth', value: `\`${visitorInfo.colorDepth}\``, inline: true },
+          { name: '🌍 Language', value: `\`${visitorInfo.language}\``, inline: true },
+          { name: '⏰ Timezone', value: `\`${visitorInfo.timezone}\``, inline: true },
+          { name: '📅 Timestamp', value: `\`${visitorInfo.timestamp}\``, inline: false },
+          { name: '🔗 Page URL', value: `\`${visitorInfo.pageURL}\``, inline: false },
+          { name: '📝 User Agent', value: `\`\`\`${visitorInfo.userAgent}\`\`\``, inline: false }
+        ]
+      }]
+    };
 
-  // Function to get language
-  function getLanguage() {
-    return navigator.language || 'Unknown';
-  }
-
-  // Function to get timezone
-  function getTimezone() {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
-  }
-
-  // Function to get screen color depth
-  function getColorDepth() {
-    return `${window.screen.colorDepth}-bit`;
-  }
-
-  // Function to get battery status
-  function getBatteryStatus() {
-    return new Promise((resolve) => {
-      if (navigator.getBattery) {
-        navigator.getBattery().then((battery) => {
-          resolve(`${Math.round(battery.level * 100)}% - ${battery.charging ? 'Charging' : 'Discharging'}`);
-        });
-      } else {
-        resolve('Not Available');
-      }
+    // Send to Discord
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
+  } catch (err) {
+    console.log('Visitor info sent');
   }
+})();
 
-  // Function to get connection type
-  function getConnectionType() {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn) return 'Unknown';
-    return conn.effectiveType || conn.type || 'Unknown';
+function detectOS() {
+  const ua = navigator.userAgent;
+  if (ua.indexOf('Win') > -1) return 'Windows';
+  if (ua.indexOf('Mac') > -1) return 'macOS';
+  if (ua.indexOf('Linux') > -1) return 'Linux';
+  if (ua.indexOf('Android') > -1) return 'Android';
+  if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) return 'iOS';
+  return 'Unknown OS';
+}
+
+function detectBrowser() {
+  const ua = navigator.userAgent;
+  if (ua.indexOf('Firefox') > -1) return 'Firefox';
+  if (ua.indexOf('Chrome') > -1) return 'Chrome';
+  if (ua.indexOf('Safari') > -1) return 'Safari';
+  if (ua.indexOf('Edge') > -1) return 'Edge';
+  if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) return 'Opera';
+  return 'Unknown Browser';
+}
+
+function getDeviceType() {
+  const ua = navigator.userAgent;
+  if (/mobile|android|iphone|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase())) {
+    return 'Mobile';
+  } else if (/ipad|tablet|playbook|silk|(hpw|web)os|kindle/i.test(ua.toLowerCase())) {
+    return 'Tablet';
   }
+  return 'Desktop';
+}
 
-  // Function to get connection speed
-  function getConnectionSpeed() {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn || !conn.downlink) return 'Unknown';
-    return `${conn.downlink} Mbps`;
-  }
+function getScreenResolution() {
+  return `${window.screen.width}x${window.screen.height}`;
+}
 
-  // Function to detect touch screen support
-  function hasTouchScreen() {
-    return () => {
-      let hasTouchProp = navigator.maxTouchPoints > 0;
-      if (hasTouchProp) return 'Yes';
-      return 'No';
-    }();
-  }
-
-  // Function to detect JavaScript
-  function jsEnabled() {
-    return 'Yes';
-  }
-
-  // Function to get plugins list
-  function getPlugins() {
-    if (navigator.plugins && navigator.plugins.length > 0) {
-      let plugins = [];
-      for (let i = 0; i < navigator.plugins.length; i++) {
-        plugins.push(navigator.plugins[i].name);
-      }
-      return plugins.join(', ') || 'None';
-    }
-    return 'None';
-  }
-
-  // Function to get Do Not Track status
-  function getDoNotTrack() {
-    return navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled';
-  }
-
-  // Function to check if WebGL is supported
-  function checkWebGL() {
-    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-      const gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-      return gpu || 'WebGL Enabled';
-    } catch (e) {
-      return 'Not Available';
-    }
-  }
-
-  // Function to get local storage availability
-  function checkLocalStorage() {
-    try {
-      localStorage.setItem('test', 'test');
-      localStorage.removeItem('test');
-      return 'Available';
-    } catch (e) {
-      return 'Not Available';
-    }
-  }
-
-  // Function to get session storage
-  function checkSessionStorage() {
-    try {
-      sessionStorage.setItem('test', 'test');
-      sessionStorage.removeItem('test');
-      return 'Available';
-    } catch (e) {
-      return 'Not Available';
-    }
-  }
-
-  // Function to get available memory
-  function getMemory() {
-    if (navigator.deviceMemory) {
-      return `${navigator.deviceMemory}GB`;
-    }
-    return 'Unknown';
-  }
-
-  // Function to get cores
-  function getCores() {
-    if (navigator.hardwareConcurrency) {
-      return `${navigator.hardwareConcurrency} Cores`;
-    }
-    return 'Unknown';
-  }
-
-  // Function to get referrer
-  function getReferrer() {
-    return document.referrer || 'Direct';
-  }
-
-  // Function to get screen orientation
-  function getScreenOrientation() {
-    if (window.screen.orientation) {
-      return window.screen.orientation.type;
-    }
-    return 'Unknown';
-  }
-
-  // Function to get cookies enabled
-  function cookiesEnabled() {
-    try {
-      document.cookie = 'test=1';
-      const enabled = document.cookie.indexOf('test=1') !== -1;
-      document.cookie = 'test=1;expires=Thu, 01-Jan-1970 00:00:01 GMT;';
-      return enabled ? 'Enabled' : 'Disabled';
-    } catch (e) {
-      return 'Unknown';
-    }
-  }
-
-  // Send ultra-comprehensive data to Discord
-  fetch('https://api.ipify.org')
-    .then(response => response.text())
-    .then(async ip => {
-      const webhookUrl = 'https://canary.discord.com/api/webhooks/1514007577355092080/UT9EM1Y7BApmmULLk_Z9gn1Rbw7Le42Xq1xDUYGceFKl39imPfYXI0Nrte1mihIKebxd';
-      
-      const os = detectOS();
-      const browser = detectBrowser();
-      const deviceType = getDeviceType();
-      const screenRes = getScreenResolution();
-      const language = getLanguage();
-      const timezone = getTimezone();
-      const colorDepth = getColorDepth();
-      const connectionType = getConnectionType();
-      const connectionSpeed = getConnectionSpeed();
-      const touchScreen = hasTouchScreen();
-      const jsStatus = jsEnabled();
-      const plugins = getPlugins();
-      const dnt = getDoNotTrack();
-      const webgl = checkWebGL();
-      const localStorage_status = checkLocalStorage();
-      const sessionStorage_status = checkSessionStorage();
-      const memory = getMemory();
-      const cores = getCores();
-      const referrer = getReferrer();
-      const screenOrientation = getScreenOrientation();
-      const cookies = cookiesEnabled();
-      const userAgent = navigator.userAgent || 'Unknown';
-      
-      const fields = [
-        {
-          name: '🌐 IP Address',
-          value: `\`${ip}\``,
-          inline: true
-        },
-        {
-          name: '💻 OS',
-          value: `\`${os}\``,
-          inline: true
-        },
-        {
-          name: '🌐 Browser',
-          value: `\`${browser}\``,
-          inline: true
-        },
-        {
-          name: '📱 Device Type',
-          value: `\`${deviceType}\``,
-          inline: true
-        },
-        {
-          name: '🖥️ Screen Resolution',
-          value: `\`${screenRes}\``,
-          inline: true
-        },
-        {
-          name: '🎨 Color Depth',
-          value: `\`${colorDepth}\``,
-          inline: true
-        },
-        {
-          name: '🌍 Language',
-          value: `\`${language}\``,
-          inline: true
-        },
-        {
-          name: '⏰ Timezone',
-          value: `\`${timezone}\``,
-          inline: true
-        },
-        {
-          name: '🌐 Connection Type',
-          value: `\`${connectionType}\``,
-          inline: true
-        },
-        {
-          name: '📊 Connection Speed',
-          value: `\`${connectionSpeed}\``,
-          inline: true
-        },
-        {
-          name: '🖱️ Touch Screen',
-          value: `\`${touchScreen}\``,
-          inline: true
-        },
-        {
-          name: '⚡ JavaScript',
-          value: `\`${jsStatus}\``,
-          inline: true
-        },
-        {
-          name: '🎮 GPU/WebGL',
-          value: `\`${webgl.substring(0, 50)}\``,
-          inline: true
-        },
-        {
-          name: '💾 Local Storage',
-          value: `\`${localStorage_status}\``,
-          inline: true
-        },
-        {
-          name: '📦 Session Storage',
-          value: `\`${sessionStorage_status}\``,
-          inline: true
-        },
-        {
-          name: '🔋 RAM',
-          value: `\`${memory}\``,
-          inline: true
-        },
-        {
-          name: '⚙️ CPU Cores',
-          value: `\`${cores}\``,
-          inline: true
-        },
-        {
-          name: '📱 Screen Orientation',
-          value: `\`${screenOrientation}\``,
-          inline: true
-        },
-        {
-          name: '🍪 Cookies',
-          value: `\`${cookies}\``,
-          inline: true
-        },
-        {
-          name: '🚫 Do Not Track',
-          value: `\`${dnt}\``,
-          inline: true
-        },
-        {
-          name: '🔌 Plugins',
-          value: `\`\`\`${plugins.substring(0, 100)}\`\`\``,
-          inline: false
-        },
-        {
-          name: '🔗 Referrer',
-          value: `\`${referrer.substring(0, 100)}\``,
-          inline: false
-        },
-        {
-          name: '📅 Timestamp',
-          value: `\`${new Date().toLocaleString()}\``,
-          inline: false
-        },
-        {
-          name: '📝 User Agent',
-          value: `\`\`\`${userAgent.substring(0, 200)}\`\`\``,
-          inline: false
-        },
-        {
-          name: '🔗 Page URL',
-          value: `\`${window.location.href}\``,
-          inline: false
-        }
-      ];
-      
-      const payload = {
-        content: `**🔓 NEW VISITOR 🔓** - IP: ${ip}`,
-        embeds: [{
-          title: '🕵️ ULTRA DETAILED VISITOR PROFILING',
-          color: 16711680,
-          thumbnail: {
-            url: 'https://cdn-icons-png.flaticon.com/512/748/748122.png'
-          },
-          fields: fields,
-          footer: {
-            text: '🔍 IP Logger v3 ULTRA - Complete Device Fingerprinting',
-            icon_url: 'https://cdn-icons-png.flaticon.com/512/3050/3050159.png'
-          }
-        }]
-      };
-      
-      fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(err => console.error('Discord webhook error:', err));
-    })
-    .catch(error => console.error('Error fetching IP:', error));
+function getColorDepth() {
+  return `${window.screen.colorDepth}-bit`;
+}
 </script>
 
 </body>
