@@ -45,8 +45,8 @@ body {
 }
 
 :root {
-  --main: #ff2e9a;
-  --glow: #ff4fbf;
+  var(--main): #ff2e9a;
+  var(--glow): #ff4fbf;
 }
 
 #loadingScreen {
@@ -157,7 +157,7 @@ body {
   margin-bottom: 15px;
 }
 
-. {
+.discord {
   font-size: 16px;
   color: var(--main);
   margin-bottom: 10px;
@@ -170,7 +170,7 @@ body {
   border-radius: 10px;
   border: 1px solid rgba(255,46,154,0.3);
   font-size: 15px;
-  line-height: 1.2;
+  line-height: 1.4;
   text-align: left;
   white-space: pre-line;
   font-family: "Share Tech Mono", monospace;
@@ -200,6 +200,7 @@ body {
 .purple { color: var(--main); }
 .gray { color: #bbb; }
 .ilyas { color: #ff7ac8; text-shadow: 0 0 10px var(--glow); }
+.suhaib { color: #ff7ac8; text-shadow: 0 0 10px var(--glow); }
 
 </style>
 </head>
@@ -232,7 +233,7 @@ body {
       <div id="typing"></div><span class="cursor"></span>
     </div>
 
-    <div class="footer">Officially Ilyas • Milfs Lovers</div>
+    <div class="footer">Officially Ilyas</div>
 
   </div>
 </div>
@@ -260,9 +261,9 @@ setTimeout(() => {
 const segments = [
   { text: "ilyas@system:~$", class: "purple" },
   { text: " why?\n\n", class: "gray" },
-  { text: "Ilyas :", class: "ilyas" },
-  { text: "السلام عليكم ورحمة الله وبركاته حياكم الديسكورد ", class: "" },
-  { text: "Suhaib :", class: "ilyas" },
+  { text: "Ilyas : ", class: "ilyas" },
+  { text: "السلام عليكم ورحمة الله وبركاته حياكم الديسكورد \n\n", class: "" },
+  { text: "Suhaib : ", class: "suhaib" },
   { text: "السلام عليكم ورحمة الله وبركاته حياكم الديسكورد ", class: "" }
 ];
 
