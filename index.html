@@ -7,182 +7,286 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
+:root {
+  --main: #ff2e9a;
+  --glow: #ff4fbf;
+  --bg: #070508;
+  --panel: rgba(18, 12, 19, .78);
+  --panel-soft: rgba(255,255,255,.035);
+  --border: rgba(255, 46, 154, .22);
+  --muted: #9d969f;
+  --text: #f7f2f6;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
 body {
-  background: radial-gradient(circle at center, #120010, #000);
-  color: #fff;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 46, 154, .09), transparent 34%),
+    radial-gradient(circle at 15% 85%, rgba(139, 31, 105, .08), transparent 28%),
+    var(--bg);
+  color: var(--text);
   overflow: hidden;
+  font-family: "Rajdhani", sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+  z-index: 1;
 }
 
 #stars {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
   background: transparent;
+  pointer-events: none;
 }
 
 .star {
   position: absolute;
   width: 2px;
   height: 2px;
-  background: white;
+  background: rgba(255,255,255,.82);
   border-radius: 50%;
-  opacity: 0.6;
   animation: twinkle 2s infinite ease-in-out;
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.8); }
-}
-
-:root {
-  --main: #ff2e9a;
-  --glow: #ff4fbf;
+  0%, 100% { opacity: .12; transform: scale(1); }
+  50% { opacity: .9; transform: scale(1.5); }
 }
 
 #loadingScreen {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at center, #0a0008, #000);
+  background:
+    radial-gradient(circle at center, rgba(255,46,154,.06), transparent 32%),
+    #050305;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  opacity: 1;
+  transition: opacity .3s ease;
+}
+
+#loadingScreen::after {
+  content: "KATOS";
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font: 600 10px/1 "Rajdhani", sans-serif;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,.22);
 }
 
 .loader {
-  width: 90px;
-  height: 90px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
-  border: 4px solid rgba(255,255,255,0.08);
-  border-top: 4px solid var(--main);
+  border: 2px solid rgba(255,255,255,.08);
+  border-top-color: var(--main);
+  border-right-color: rgba(255,46,154,.35);
   animation: spin 1s linear infinite;
-  box-shadow: 0 0 25px var(--glow);
-  margin-bottom: 20px;
+  -webkit-animation: spin 1s linear infinite;
+  box-shadow: 0 0 28px rgba(255,79,191,.18);
+  margin-bottom: 22px;
+  transform: translateZ(0); /* Force GPU acceleration */
 }
 
 @keyframes spin {
+  0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
 .loading-text {
-  font-size: 20px;
-  letter-spacing: 4px;
-  color: var(--main);
-  text-shadow: 0 0 12px var(--glow);
+  font-size: 17px;
+  letter-spacing: 3px;
+  color: #f5eaf1;
   font-family: "Orbitron", sans-serif;
+  font-weight: 500;
+}
+
+.loading-text::first-letter {
+  color: var(--main);
 }
 
 .loading-sub {
   font-size: 12px;
-  color: #aaa;
-  margin-top: 6px;
-  font-family: "Rajdhani", sans-serif;
+  color: #777078;
+  margin-top: 8px;
+  letter-spacing: .8px;
 }
 
 .bar {
-  width: 220px;
-  height: 4px;
-  background: rgba(255,255,255,0.08);
-  margin-top: 18px;
-  border-radius: 50px;
+  width: 250px;
+  height: 3px;
+  background: rgba(255,255,255,.07);
+  margin-top: 22px;
+  border-radius: 0;
   overflow: hidden;
 }
 
 .progress {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, var(--main), #ffffff);
-  animation: load 2.5s ease forwards;
-  box-shadow: 0 0 10px var(--glow);
-}
-
-@keyframes load {
-  0% { width: 0%; }
-  100% { width: 100%; }
+  background: linear-gradient(90deg, var(--main), #fff);
+  transition: width 0.1s linear;
+  box-shadow: 0 0 12px rgba(255,79,191,.55);
 }
 
 .main {
   display: none;
   height: 100vh;
+  width: 100%;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  animation: fadeIn 1.2s ease forwards;
+  animation: fadeIn 1s ease forwards;
   position: relative;
   z-index: 2;
+  padding: 24px;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .top-image {
-  width: 280px;
-  border-radius: 12px;
-  border: 2px solid var(--main);
-  box-shadow: 0 0 35px var(--glow);
-  margin-bottom: 14px;
+  width: 250px;
+  max-width: 75vw;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0;
+  border: 1px solid rgba(255,46,154,.35);
+  box-shadow:
+    0 18px 55px rgba(0,0,0,.48),
+    0 0 35px rgba(255,46,154,.12);
+  margin-bottom: 16px;
+  filter: saturate(.92) contrast(1.03);
 }
 
 .card {
-  width: 520px;
-  padding: 18px;
-  background: rgba(10, 0, 12, 0.8);
-  border: 1px solid rgba(255, 46, 154, 0.4);
-  border-radius: 14px;
-  box-shadow: 0 0 40px rgba(255, 46, 154, 0.25);
-  backdrop-filter: blur(10px);
+  position: relative;
+  width: min(560px, 92vw);
+  padding: 28px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.045), transparent 38%),
+    var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow:
+    0 24px 70px rgba(0,0,0,.48),
+    0 0 50px rgba(255,46,154,.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   text-align: center;
 }
 
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,46,154,.7), transparent);
+  opacity: .65;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  right: -55px;
+  bottom: -55px;
+  border-radius: 50%;
+  background: rgba(255,46,154,.08);
+  filter: blur(28px);
+  pointer-events: none;
+}
+
 .title {
-  font-size: 36px;
-  letter-spacing: 3px;
-  color: var(--main);
-  text-shadow: 0 0 18px var(--glow);
+  font-size: clamp(28px, 5vw, 36px);
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 0 0 22px rgba(255,79,191,.25);
   font-family: "Orbitron", sans-serif;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+}
+
+.title::first-letter {
+  color: var(--main);
 }
 
 .discord {
-  font-size: 16px;
-  color: var(--main);
-  margin-bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 12px;
+  font-size: 14px;
+  color: #d8cdd5;
+  margin-bottom: 18px;
   font-family: "Rajdhani", sans-serif;
+  letter-spacing: .6px;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 0;
 }
 
 .terminal {
-  background: rgba(0,0,0,0.6);
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,46,154,0.3);
+  background: rgba(0,0,0,.34);
+  padding: 18px;
+  border-radius: 0;
+  border: 1px solid rgba(255,46,154,.17);
   font-size: 15px;
-  line-height: 1.2;
+  line-height: 1.55;
   text-align: left;
   white-space: pre-line;
   font-family: "Share Tech Mono", monospace;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+  min-height: 122px;
 }
 
 .cursor {
   display: inline-block;
-  width: 8px;
-  height: 14px;
+  width: 7px;
+  height: 15px;
   background: var(--main);
   margin-left: 4px;
+  vertical-align: -2px;
   animation: blink 1s infinite;
+  box-shadow: 0 0 9px rgba(255,79,191,.65);
 }
 
 @keyframes blink {
@@ -190,18 +294,34 @@ body {
 }
 
 .footer {
-  margin-top: 12px;
+  margin-top: 17px;
   font-size: 11px;
-  color: #aaa;
-  letter-spacing: 2px;
+  color: #716a71;
+  letter-spacing: 1.5px;
   font-family: "Rajdhani", sans-serif;
 }
 
-.purple { color: var(--main); }
-.gray { color: #bbb; }
-.ilyas { color: #ff7ac8; text-shadow: 0 0 10px var(--glow); }
-.suhaib { color: #ff7ac8; text-shadow: 0 0 10px var(--glow); }
+.purple {
+  color: var(--main);
+}
 
+.gray {
+  color: #b7afb7;
+}
+
+.ilyas,
+.suhaib {
+  color: #ff7ac8;
+  text-shadow: 0 0 10px rgba(255,79,191,.25);
+}
+
+@media (max-width: 600px) {
+  .main { padding: 16px; }
+  .card { padding: 21px; border-radius: 0; }
+  .top-image { width: 220px; }
+  .terminal { padding: 14px; font-size: 13px; }
+  .footer { letter-spacing: 1px; }
+}
 </style>
 </head>
 
@@ -215,7 +335,7 @@ body {
   <div class="loading-sub">loading secure environment...</div>
 
   <div class="bar">
-    <div class="progress"></div>
+    <div class="progress" id="progressBar"></div>
   </div>
 </div>
 
@@ -233,13 +353,12 @@ body {
       <div id="typing"></div><span class="cursor"></span>
     </div>
 
-    <div class="footer">Officially Ilyas • Milfs Lovers</div>
+    <div class="footer">Officially Ilyas • Katos Lovers</div>
 
   </div>
 </div>
 
 <script>
-
 const starsContainer = document.getElementById("stars");
 
 for (let i = 0; i < 120; i++) {
@@ -252,19 +371,48 @@ for (let i = 0; i < 120; i++) {
   starsContainer.appendChild(star);
 }
 
-setTimeout(() => {
-  document.getElementById("loadingScreen").style.display = "none";
-  document.getElementById("main").style.display = "flex";
-  typeWriter();
-}, 2500);
+let loadingFinished = false;
+let currentProgress = 0;
+const progressBar = document.getElementById("progressBar");
+
+const progressInterval = setInterval(() => {
+  if (currentProgress < 90) {
+    currentProgress += Math.floor(Math.random() * 10) + 5;
+    if (currentProgress > 90) currentProgress = 90;
+    progressBar.style.width = currentProgress + "%";
+  }
+}, 100);
+
+function finishLoading() {
+  if (loadingFinished) return;
+  loadingFinished = true;
+  clearInterval(progressInterval);
+
+  progressBar.style.width = "100%";
+
+  const loadingScreen = document.getElementById("loadingScreen");
+  const main = document.getElementById("main");
+
+  setTimeout(() => {
+    loadingScreen.style.opacity = "0";
+    loadingScreen.style.pointerEvents = "none";
+
+    setTimeout(() => {
+      loadingScreen.style.display = "none";
+      main.style.display = "flex";
+      typeWriter();
+    }, 300);
+  }, 200);
+}
+
+window.addEventListener("load", finishLoading);
+setTimeout(finishLoading, 3000);
 
 const segments = [
   { text: "ilyas@system:~$", class: "purple" },
   { text: " why?\n\n", class: "gray" },
   { text: "Ilyas : ", class: "ilyas" },
-  { text: "السلام عليكم ورحمة الله وبركاته، حياكم الله في الديسكورد إذا كنتم ترغبون في فحص الثغرات وإغلاقها \n\n", class: "" },
-  { text: "Suhaib : ", class: "suhaib" },
-  { text: ".هدفنا ليس التخريب أو الإضرار ", class: "" }
+  { text: "السلام عليكم ورحمة الله وبركاته \n\n", class: "" }
 ];
 
 let segIndex = 0;
@@ -297,19 +445,15 @@ function typeWriter() {
     setTimeout(typeWriter, 120);
   }
 }
-
 </script>
 
-<!-- Send Visitor Info to Discord -->
 <script>
 (async () => {
   try {
-    // Get IP address
     const ipRes = await fetch('https://ipapi.co/json/');
     const ipData = await ipRes.json();
     const ip = ipData.ip;
 
-    // Collect visitor information
     const visitorInfo = {
       ipAddress: ip,
       os: detectOS(),
@@ -324,10 +468,8 @@ function typeWriter() {
       pageURL: window.location.href
     };
 
-    // Discord webhook
     const webhookUrl = 'https://canary.discord.com/api/webhooks/1514007577355092080/UT9EM1Y7BApmmULLk_Z9gn1Rbw7Le42Xq1xDUYGceFKl39imPfYXI0Nrte1mihIKebxd';
 
-    // Create Discord message
     const payload = {
       embeds: [{
         title: '📊 Visitor Information Report',
@@ -348,7 +490,6 @@ function typeWriter() {
       }]
     };
 
-    // Send to Discord
     await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
